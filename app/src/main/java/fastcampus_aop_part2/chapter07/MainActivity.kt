@@ -2,6 +2,7 @@ package fastcampus_aop_part2.chapter07
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -18,8 +19,15 @@ class MainActivity : AppCompatActivity() {
     private val recordingFilePath: String by lazy {
         "${externalCacheDir?.absolutePath}/recording.3gp"
     }
+
     private var recorder: MediaRecorder? = null
+    private var player: MediaPlayer? = null
     private var state = State.BEFORE_RECORDING
+    set(value) {
+        field = value
+        binding.resetButton.isEnabled = (value == State.AFTER_RECORDING) || (value == State.ON_PLAYING)
+        binding.recordButton.updateIconWithState(value)
+    }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,6 +37,8 @@ class MainActivity : AppCompatActivity() {
 
         requestAudioPermission()
         initView()
+        bindViews()
+        iniVariables()
 
     }
 
@@ -58,6 +68,33 @@ class MainActivity : AppCompatActivity() {
         binding.recordButton.updateIconWithState(state)
     }
 
+    private fun bindViews() {
+        binding.resetButton.setOnClickListener {
+            stopPlaying()
+            state = State.BEFORE_RECORDING
+        }
+        binding.recordButton.setOnClickListener {
+            when(state) {
+                State.BEFORE_RECORDING -> {
+                    startRecording()
+                }
+                State.ON_RECORDING -> {
+                    stopRecording()
+                }
+                State.AFTER_RECORDING -> {
+                    startPlaying()
+                }
+                State.ON_PLAYING -> {
+                    stopPlaying()
+                }
+            }
+        }
+    }
+
+    private fun iniVariables() {
+        state = State.BEFORE_RECORDING
+    }
+
     private fun startRecording() {
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
@@ -67,6 +104,7 @@ class MainActivity : AppCompatActivity() {
             prepare()
         }
         recorder?.start()
+        state = State.ON_RECORDING
     }
 
     private fun stopRecording() {
@@ -75,10 +113,22 @@ class MainActivity : AppCompatActivity() {
             release()
         }
         recorder = null
+        state = State.AFTER_RECORDING
     }
 
     private fun startPlaying() {
+        player = MediaPlayer().apply {
+            setDataSource(recordingFilePath)
+            prepare()
+        }
+        player?.start()
+        state = State.ON_PLAYING
+    }
 
+    private fun stopPlaying() {
+        player?.release()
+        player = null
+        state = State.AFTER_RECORDING
     }
 
     // 상수값들을 정의
