@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <fastcampus_aop_part2.chapter07.SoundVisualizerView
+        android:id="@+id/soundVisualizerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:layout_marginBottom="20dp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/recordTimeTextView" />
+
     <Button
         android:id="@+id/resetButton"
         android:layout_width="wrap_content"
@@ -17,12 +29,13 @@
         app:layout_constraintTop_toTopOf="@+id/recordButton"
         tools:ignore="HardcodedText" />
 
-    <TextView
+    <fastcampus_aop_part2.chapter07.CountUpView
         android:id="@+id/recordTimeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
         android:text="00:00"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/recordButton"
         app:layout_constraintEnd_toEndOf="@+id/recordButton"
         app:layout_constraintStart_toStartOf="@+id/recordButton"
@@ -31,6 +44,8 @@
     <fastcampus_aop_part2.chapter07.RecordButton
         android:id="@+id/recordButton"
         android:layout_width="100dp"
+        android:scaleType="fitCenter"
+        android:padding="25dp"
         android:layout_height="100dp"
         android:layout_marginBottom="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
